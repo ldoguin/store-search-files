@@ -2,6 +2,8 @@ package org.couchbase.devex;
 
 import java.io.File;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.util.rawQuerying.RawQueryExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,5 +25,10 @@ public class StoreSearchFilesSyncApplication {
 		return (String[] args) -> {
 			new File(configuration.getBinaryStoreRoot()).mkdirs();
 		};
+	}
+
+	@Bean
+	public RawQueryExecutor rawQueryExecutor(final Bucket bucket){
+		return  new RawQueryExecutor(bucket.name(), "", bucket.core(), bucket.environment());
 	}
 }

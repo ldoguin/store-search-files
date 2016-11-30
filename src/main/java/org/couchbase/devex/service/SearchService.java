@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.queries.TermQuery;
+import com.couchbase.client.java.search.result.SearchQueryResult;
 import org.springframework.stereotype.Service;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.consistency.ScanConsistency;
-import com.couchbase.client.java.search.SearchQueryResult;
-import com.couchbase.client.java.search.query.FuzzyQuery;
-import com.couchbase.client.java.search.query.SearchQuery;
-import com.couchbase.client.java.search.query.TermQuery;
 
 @Service
 public class SearchService {
@@ -46,8 +45,9 @@ public class SearchService {
 	}
 
 	public List<Map<String, Object>> searchFulltextFiles(String term) {
-		SearchQuery ftq = TermQuery.on("file_fulltext").term(term)
-				.fields("binaryStoreDigest", "binaryStoreLocation").build();
+		SearchQuery ftq = new SearchQuery("file_fulltext", SearchQuery
+				.term(term));
+				ftq.fields("binaryStoreDigest", "binaryStoreLocation");
 		SearchQueryResult result = bucket.query(ftq);
 		List<Map<String, Object>> filenames = result.hits().stream().map(row -> {
 			Map<String, Object> m = new HashMap<String, Object>();
